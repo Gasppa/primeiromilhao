@@ -1,0 +1,16 @@
+{
+  "name": "parmais-challenge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && npm start",
+    "start": "concurrently --kill-others-on-fail \"npm run frontend\" \"npm run backend\""
+  },
+  "devDependencies": {},
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^6.2.0"
+  }
+}

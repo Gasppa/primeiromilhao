@@ -1,0 +1,46 @@
+{
+  "name": "parmais-challenge-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "date-fns": "^2.22.1",
+    "formik": "^2.2.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-number-format": "^4.6.3",
+    "react-scripts": "4.0.3",
+    "react-text-mask": "^5.4.3",
+    "styled-components": "^5.3.0",
+    "swagger-client": "^3.13.5",
+    "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "eslint": "^7.29.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-react": "^7.24.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}

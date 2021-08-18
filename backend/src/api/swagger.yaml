@@ -1,0 +1,83 @@
+swagger: '2.0'
+info:
+  description: This document describes the endpoints for parmais challenge.
+  version: 1.0.0
+  title: ParMais Challenge
+  termsOfService: 'https://www.parmais.com.br/terms/'
+  contact:
+    email: ti@parmais.com.br
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+basePath: /api
+tags:
+- name: health
+  description: System health
+- name: data
+  description: Data
+- name: calculations
+  description: Calculations
+schemes:
+- http
+paths:
+  /health/check:
+    get:
+      tags:
+      - health
+      summary: Retrieve system health and status.
+      x-swagger-router-controller: Health
+      operationId: checkHealth
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Health'
+  /data/projections:
+    get:
+      tags:
+      - data
+      summary: Retrieve a list of projections.
+      x-swagger-router-controller: Data
+      operationId: getProjections
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/Projections'
+definitions:
+  Health:
+    type: object
+    properties:
+      status:
+        type: string
+  Projections:
+    type: object
+    properties:
+      IPCA:
+        type: number
+        format: float
+      ratesByRisk:
+        type: object
+        properties:
+          conservative:
+            type: number
+            format: float
+          moderatelyConservative:
+            type: number
+            format: float
+          moderatelyAggressive:
+            type: number
+            format: float
+          aggressive:
+            type: number
+            format: float
+          veryAggressive:
+            type: number
+            format: float
+externalDocs:
+  description: Want to know more about ParMais?
+  url: 'https://www.parmais.com.br'
