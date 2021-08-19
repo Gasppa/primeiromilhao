@@ -48,6 +48,20 @@ paths:
           description: Successful operation
           schema:
             $ref: '#/definitions/Projections'
+  /myfirstmillion/pmt:
+    post:
+      tags:
+      - myfirstmillion
+      summary: Retrieve the pmt with and without ParMais services.
+      x-swagger-router-controller: FirstMillion
+      operationId: getFirstMillionProjection
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: Successful operation
+          schema:
+            $ref: '#/definitions/PMT'
 definitions:
   Health:
     type: object
@@ -78,6 +92,15 @@ definitions:
           veryAggressive:
             type: number
             format: float
+  PMT:
+    type: object
+    properties:
+      pmtComParMais:
+        type: number
+        format: float
+      pmtSemParMais:
+        type: number
+        format: float
 externalDocs:
   description: Want to know more about ParMais?
   url: 'https://www.parmais.com.br'
