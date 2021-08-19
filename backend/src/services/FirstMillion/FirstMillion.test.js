@@ -1,24 +1,27 @@
 /* global test, expect */
 
 const FirstMillion = require('./FirstMillion')
+const Data = require('../Data')
 
 test('FirstMillion.getFirstMillionProjection() - should return a projection for the clients first million', async () => {
-  const data = await FirstMillion.getFirstMillionProjection()
-
-  expect(data).toEqual(
+  const mockBodyString = JSON.stringify({ initialValue: 10000, yearsToAccomplish: 12 })
+  const result = await FirstMillion.getFirstMillionProjection(mockBodyString)
+  expect(result).toEqual(
     expect.objectContaining({
-      IPCA: expect.any(Number),
-      ratesByRisk: expect.any(Object)
-    })
-  )
+      pmtComParMais: expect.any(Number),
+      pmtSemParMais: expect.any(Number)
+    }))
+})
 
-  expect(data.ratesByRisk).toEqual(
+test('FirstMillion.getTaxas() - should return an object with all taxes necessary to calculate the PMT', async () => {
+  const projections = await Data.getProjections()
+  const taxas = FirstMillion.getTaxas(projections.IPCA, projections.ratesByRisk.moderatelyAggressive)
+
+  expect(taxas).toEqual(
     expect.objectContaining({
-      conservative: expect.any(Number),
-      moderatelyConservative: expect.any(Number),
-      moderatelyAggressive: expect.any(Number),
-      aggressive: expect.any(Number),
-      veryAggressive: expect.any(Number)
-    })
-  )
+      taxaNominalBruta: expect.any(Number),
+      taxaNominalLiquida: expect.any(Number),
+      taxaRealLiquidaAno: expect.any(Number),
+      taxaRealLiquidaMes: expect.any(Number)
+    }))
 })

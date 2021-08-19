@@ -2,9 +2,8 @@ const Data = require('../Data')
 const TAXA_REAL_SEMPARMAIS = 0.01
 
 async function getFirstMillionProjection (body) {
-  const { initialValue, yearsToAccomplish } = JSON.parse(body)
-
   try {
+    const { initialValue, yearsToAccomplish } = JSON.parse(body)
     const projections = await Data.getProjections()
 
     const taxasComParMais = getTaxas(projections.IPCA, projections.ratesByRisk.moderatelyAggressive)
@@ -18,7 +17,7 @@ async function getFirstMillionProjection (body) {
       pmtSemParMais
     })
   } catch (error) {
-    console.log(error)
+    return Promise.reject(error)
   }
 }
 
@@ -50,5 +49,6 @@ function PMT (rate, nperiodYears, pv, fv, type) {
 }
 
 module.exports = {
-  getFirstMillionProjection
+  getFirstMillionProjection,
+  getTaxas
 }
