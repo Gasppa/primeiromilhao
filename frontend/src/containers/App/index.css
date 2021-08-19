@@ -1,0 +1,34 @@
+@font-face {
+    font-family: "MulishRegular";
+    src: local("MulishRegular"),
+     url("../../assets/fonts/Mulish/Mulish-Regular.ttf") format("truetype");
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "MulishBlack";
+    src: local("MulishBlack"),
+     url("../../assets/fonts/Mulish/Mulish-Black.ttf") format("truetype");
+    font-weight: 900;
+}
+
+@media only screen and (max-width: 320px) {
+
+    body { 
+        font-size: 10px; 
+    }
+
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+}
+
+.ff-mulish_regular{
+    font-family: "MulishRegular";
+}
+
+.ff-mulish_black{
+    font-family: "MulishBlack";
+}

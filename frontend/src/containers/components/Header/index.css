@@ -1,0 +1,14 @@
+.header_container {
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+.border-gradient {
+    border-width: 0px 0px 4px 0px;
+    border-style: solid;
+    border-image-source: linear-gradient(
+    90deg
+    , #2AE39B, #44CFC4);
+    border-image-slice: 60 30;
+}
