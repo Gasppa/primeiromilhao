@@ -1,0 +1,66 @@
+.form_container{
+    width: 90%;
+    margin: auto;
+}
+
+.form_header{
+    margin-top: 48px;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+.form-parmais{
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+}
+
+.form_card{
+    display: grid;
+    margin: auto;
+    text-align: left;
+    padding: 0px 100px 30px 100px;
+    margin-top: 32px;
+    box-shadow: 0px 4px 32px rgb(32 35 45 / 16%);
+    border-radius: 32px;
+    margin-bottom: 30px;
+}
+
+.radio_container{
+    margin-bottom: 45px;
+    margin-top: 15px;
+    text-align: initial;
+}
+
+.radio_group{
+    margin-top: 10px;
+}
+.MuiFormControlLabel-root.radio-button_feminino{
+    margin-right: 60px;
+}
+
+.form_disclaimer{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 10px;
+}
+
+.mandatory-field_container{
+    margin-bottom: 15px;
+    height: 20px;
+}
+
+.mandatory-field_text{
+    color: red;
+    font-size: 0.8em;
+}
+
+@media only screen and (max-width: 1024px) {
+
+    .form_card {
+        padding: unset;
+        margin-top: unset;
+        box-shadow: unset;
+        border-radius: unset
+    }
+}

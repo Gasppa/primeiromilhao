@@ -6,29 +6,93 @@
 }
 
 @font-face {
+    font-family: "MulishBold";
+    src: local("MulishBold"),
+     url("../../assets/fonts/Mulish/Mulish-Bold.ttf") format("truetype");
+    font-weight: 700;
+}
+
+@font-face {
     font-family: "MulishBlack";
     src: local("MulishBlack"),
      url("../../assets/fonts/Mulish/Mulish-Black.ttf") format("truetype");
     font-weight: 900;
 }
 
-@media only screen and (max-width: 320px) {
-
-    body { 
-        font-size: 10px; 
-    }
-
-}
 
 html, body {
     padding: 0;
     margin: 0;
 }
 
+input, input::placeholder{
+    font-size: 1em !important;
+    font-family: "MulishRegular" !important;
+}
+
 .ff-mulish_regular{
+    font-family: "MulishRegular";
+}
+
+.ff-mulish_bold{
     font-family: "MulishRegular";
 }
 
 .ff-mulish_black{
     font-family: "MulishBlack";
+}
+
+.input-parmais{
+    border-width: 0px 0px 2px 0px;
+    border-color: rgba(62, 69, 87, 0.3);
+    outline: none;
+    height: 25px;
+    transition: all 200ms ease-in-out;
+}
+
+.input-parmais:focus{
+    border-color: #24b3b3;
+}
+
+.input-parmais::placeholder{
+    color: #3E4557 !important;
+}
+
+.medium-gray{
+    color: #3E4557
+}
+
+.button-parmais{
+    border: none;
+    outline: none;
+    background: #48CCCC;
+    box-shadow: 0px 3px 5px rgba(36, 179, 179, 0.35);
+    border-radius: 3px;
+    height: 40px;
+    color: #fff;
+    margin: auto;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+.button-parmais_md{
+    width: 130px;
+}
+
+.MuiInput-underline.Mui-focused:after{
+    border-bottom: 2px solid #24B3B3;
+}
+
+@media only screen and (max-width: 321px) {
+
+    body { 
+        font-size: 10px; 
+    }
+
+    input, input::placeholder{
+        font-size: 1.2em;
+    }
 }
