@@ -21,6 +21,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "axios": "^0.21.1",
     "eslint": "^7.29.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.23.4",

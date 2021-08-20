@@ -15,8 +15,8 @@ tags:
   description: System health
 - name: data
   description: Data
-- name: calculations
-  description: Calculations
+- name: myfirstmillion
+  description: MyFirstMillion
 schemes:
 - http
 paths:
