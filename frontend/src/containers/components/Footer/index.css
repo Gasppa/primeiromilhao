@@ -1,0 +1,66 @@
+.footer_parmais{
+    margin-top: 20px;
+    background-color: #20232D;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer_parmais_logo{
+    width: 72px;
+}
+
+.footer_parmais_name{
+    color: #48CCCC;
+}
+
+.footer_parmais_cnpj{
+    color: #fff;
+}
+
+.footer-div{
+    height: 42px;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.footer-div_border{
+    height: 42px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #fff;
+    padding-right: 10px;
+    margin-right: 10px;
+}
+
+.footer-div.logo{
+    width: 10%;
+}
+
+.footer-div.name{
+    width: 15%;
+}
+
+.footer-div.cnpj{
+    width: 30%;
+}
+
+@media only screen and (max-width: 800px) {
+
+    .footer_parmais { 
+        font-size: 12px;
+        padding: 5px 10px;
+        height: 210px;
+        flex-direction: column;
+    }
+
+    .footer-div {
+        text-align: center;
+    }
+
+    .footer-div.logo, .footer-div.name, .footer-div.cnpj{
+        width: unset;
+    }
+}
