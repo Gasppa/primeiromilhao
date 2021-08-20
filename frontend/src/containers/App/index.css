@@ -36,7 +36,7 @@ input, input::placeholder{
 }
 
 .ff-mulish_bold{
-    font-family: "MulishRegular";
+    font-family: "MulishBold";
 }
 
 .ff-mulish_black{
@@ -72,6 +72,13 @@ input, input::placeholder{
     height: 40px;
     color: #fff;
     margin: auto;
+    cursor: pointer
+}
+
+.button-inverse{
+    color: #24B3B3;
+    background: #FFFFFF;
+    box-shadow: 0px 3px 5px rgba(36, 179, 179, 0.15);
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
@@ -81,6 +88,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .button-parmais_md{
     width: 130px;
+}
+
+.button-parmais_lg{
+    width: 260px;
 }
 
 .MuiInput-underline.Mui-focused:after{

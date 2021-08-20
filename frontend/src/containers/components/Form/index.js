@@ -4,6 +4,7 @@ import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
+import Modal from '../Modal'
 import { getFirstMillionProjectionUsingAxios } from '../../../core/api'
 
 import './index.css'
@@ -42,7 +43,7 @@ const initialState = {
   initialValue: '',
   yearsToAccomplish: '',
   IsFormValid: true,
-  IsModalOpen: false,
+  IsModalOpen: true,
   pmtComParMais: 0,
   pmtSemParMais: 0
 }
@@ -54,6 +55,11 @@ export default class Form extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleDateChange = this.handleDateChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.closeModal = this.closeModal.bind(this)
+  }
+
+  closeModal () {
+    this.setState(initialState)
   }
 
   async handleSubmit (e) {
@@ -75,12 +81,13 @@ export default class Form extends Component {
       const { initialValue, yearsToAccomplish } = this.state
       const body = { initialValue, yearsToAccomplish }
       const result = await getFirstMillionProjectionUsingAxios(body)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       this.setState((prevState) => {
         return {
           ...prevState,
           pmtComParMais: result.data.pmtComParMais,
           pmtSemParMais: result.data.pmtSemParMais,
-          IsModalOpen: !IsFormValid
+          IsModalOpen: true
         }
       })
     }
@@ -196,6 +203,12 @@ export default class Form extends Component {
             <button className="button-parmais button-parmais_md ff-mulish_bold" type="submit">Calcular</button>
           </form>
         </div>
+        <Modal
+          IsOpen={this.state.IsModalOpen}
+          closeModal={this.closeModal}
+          pmtComParMais={this.state.pmtComParMais}
+          pmtSemParMais={this.state.pmtSemParMais}
+        />
       </>
     )
   }
