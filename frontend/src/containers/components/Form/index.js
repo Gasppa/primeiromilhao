@@ -12,6 +12,7 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import * as yup from 'yup'
 import Modal from '../Modal'
 import { getFirstMillionProjection, getProjections } from '../../../core/api'
+import loading from '../../../assets/images/loading.gif'
 
 import './index.css'
 
@@ -91,6 +92,7 @@ const CustomTextField = withStyles({
 const initialState = {
   age: 0,
   IsModalOpen: false,
+  IsLoading: false,
   parmaisPMT: 0,
   regularPMT: 0
 }
@@ -113,6 +115,7 @@ const initialProjections = {
 
 function Form () {
   const [state, setState] = useState(initialState)
+  const [IsLoading, setIsLoading] = useState(false)
   const [projections, setProjections] = useState(initialProjections)
 
   useEffect(() => {
@@ -136,11 +139,10 @@ function Form () {
     validationSchema: formSchema,
     onSubmit: async (values) => {
       const IsFormValid = formik.isValid
-      setState((state) => {
-        return { ...state, IsFormValid }
-      })
 
       if (IsFormValid) {
+        setIsLoading(true)
+
         const { initialValue, yearsToAccomplish, dateOfBirth } = values
         const parsedDate = parse(dateOfBirth, 'yyyy-MM-dd', new Date())
         const age = differenceInYears(new Date(), parsedDate)
@@ -150,16 +152,20 @@ function Form () {
         }
         const result = await getFirstMillionProjection({ body })
 
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-        setState((prevState) => {
-          return {
-            ...prevState,
-            age,
-            parmaisPMT: result.parmaisPMT,
-            regularPMT: result.regularPMT,
-            IsModalOpen: true
-          }
-        })
+        setTimeout(() => {
+          setIsLoading(false)
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+          setState((prevState) => {
+            return {
+              ...prevState,
+              age,
+              parmaisPMT: result.parmaisPMT,
+              regularPMT: result.regularPMT,
+              IsLoading: false,
+              IsModalOpen: true
+            }
+          })
+        }, 3000)
       }
     }
   })
@@ -251,7 +257,9 @@ function Form () {
             <span className="ff-mulish_regular medium-gray form_disclaimer">Nesta simulação aplicamos uma taxa de juros real de {(projections.ratesByRisk.moderatelyAggressive * 100).toFixed(1)}% ao ano e uma inflação de {(projections.IPCA * 100).toFixed(2)}% ao ano.</span>
 
           </div>
-          <button className="button-parmais button-parmais_md button-parmais_calc ff-mulish_bold" type="submit">Calcular</button>
+          <button className="button-parmais button-parmais_md button-parmais_calc ff-mulish_bold" type="submit">
+            {IsLoading ? <img className="loading" src={loading}/> : 'Calcular'}
+          </button>
         </form>
       </div>
       <Modal
