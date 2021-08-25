@@ -1,5 +1,4 @@
 import Swagger from 'swagger-client'
-import axios from 'axios'
 
 const BACKEND_PORT = 8080
 
@@ -12,14 +11,9 @@ export const getProjections = () => {
   })
 }
 
-export const getFirstMillionProjection = () => {
+export const getFirstMillionProjection = (body) => {
   return swagger.then(client => {
-    return client.apis.myfirstmillion.getFirstMillionProjection()
+    return client.apis.myfirstmillion.getFirstMillionProjection(body)
       .then(({ body }) => body)
   })
-}
-
-export const getFirstMillionProjectionUsingAxios = async (body) => {
-  const result = await axios.post('http://localhost:8080/api/myfirstmillion/pmt', { ...body })
-  return result
 }

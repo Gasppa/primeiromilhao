@@ -53,6 +53,14 @@ paths:
       tags:
       - myfirstmillion
       summary: Retrieve the pmt with and without ParMais services.
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/FirstMillionBody'
+          required: true
       x-swagger-router-controller: FirstMillion
       operationId: getFirstMillionProjection
       produces:
@@ -95,10 +103,19 @@ definitions:
   PMT:
     type: object
     properties:
-      pmtComParMais:
+      parmaisPMT:
         type: number
         format: float
-      pmtSemParMais:
+      regularPMT:
+        type: number
+        format: float
+  FirstMillionBody:
+    type: object
+    properties:
+      initialValue:
+        type: number
+        format: float
+      yearsToAccomplish:
         type: number
         format: float
 externalDocs:

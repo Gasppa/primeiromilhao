@@ -10,7 +10,7 @@
 }
 
 .form-parmais{
-    max-width: 600px;
+    max-width: 580px;
     margin: auto;
     text-align: center;
 }
@@ -19,11 +19,11 @@
     display: grid;
     margin: auto;
     text-align: left;
-    padding: 0px 100px 30px 100px;
+    padding: 0px 48px 30px 48px;
     margin-top: 32px;
     box-shadow: 0px 4px 32px rgb(32 35 45 / 16%);
     border-radius: 32px;
-    margin-bottom: 30px;
+    margin-bottom: 48px;
 }
 
 .radio_container{
@@ -46,13 +46,21 @@
 }
 
 .mandatory-field_container{
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     height: 20px;
 }
 
 .mandatory-field_text{
     color: red;
     font-size: 0.8em;
+}
+
+.button-parmais_calc{
+    margin-bottom: 48px;
+}
+
+.input-parmais_datebirth{
+    margin-bottom: 50px !important;
 }
 
 @media only screen and (max-width: 1024px) {

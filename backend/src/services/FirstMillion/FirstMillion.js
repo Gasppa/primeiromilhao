@@ -1,33 +1,33 @@
 const Data = require('../Data')
-const TAXA_REAL_SEMPARMAIS = 0.01
+const REGULAR_REAL_FEE = 0.01
 
 async function getFirstMillionProjection (body) {
   try {
-    const { initialValue, yearsToAccomplish } = JSON.parse(body)
+    const { initialValue, yearsToAccomplish } = body
     const projections = await Data.getProjections()
 
-    const taxasComParMais = getTaxas(projections.IPCA, projections.ratesByRisk.moderatelyAggressive)
-    const taxasSemParMais = getTaxas(projections.IPCA, TAXA_REAL_SEMPARMAIS)
+    const parmaisFees = getFees(projections.IPCA, projections.ratesByRisk.moderatelyAggressive)
+    const regularFees = getFees(projections.IPCA, REGULAR_REAL_FEE)
 
-    const pmtComParMais = PMT(taxasComParMais.taxaRealLiquidaMes, yearsToAccomplish, initialValue, -1000000, 0)
-    const pmtSemParMais = PMT(taxasSemParMais.taxaRealLiquidaMes, yearsToAccomplish, initialValue, -1000000, 0)
+    const parmaisPMT = PMT(parmaisFees.netMonthlyRealRate, yearsToAccomplish, initialValue, -1000000, 0)
+    const regularPMT = PMT(regularFees.netMonthlyRealRate, yearsToAccomplish, initialValue, -1000000, 0)
 
-    return Promise.resolve({
-      pmtComParMais,
-      pmtSemParMais
-    })
+    return {
+      parmaisPMT,
+      regularPMT
+    }
   } catch (error) {
-    return Promise.reject(error)
+    return error
   }
 }
 
-function getTaxas (IPCA, TaxaReal) {
-  const taxasObj = {}
-  taxasObj.taxaNominalBruta = ((1 + (1 * TaxaReal)) * (1 + IPCA)) - 1
-  taxasObj.taxaNominalLiquida = taxasObj.taxaNominalBruta * 0.85
-  taxasObj.taxaRealLiquidaAno = ((1 + taxasObj.taxaNominalLiquida) / (1 + IPCA)) - 1
-  taxasObj.taxaRealLiquidaMes = ((1 + taxasObj.taxaRealLiquidaAno) ** (1 / 12)) - 1
-  return taxasObj
+function getFees (IPCA, RealFee) {
+  const feesObj = {}
+  feesObj.grossNominalFee = ((1 + (1 * RealFee)) * (1 + IPCA)) - 1
+  feesObj.netNominalFee = feesObj.grossNominalFee * 0.85
+  feesObj.netAnnualRealRate = ((1 + feesObj.netNominalFee) / (1 + IPCA)) - 1
+  feesObj.netMonthlyRealRate = ((1 + feesObj.netAnnualRealRate) ** (1 / 12)) - 1
+  return feesObj
 }
 
 function PMT (rate, nperiodYears, pv, fv, type) {
@@ -50,5 +50,5 @@ function PMT (rate, nperiodYears, pv, fv, type) {
 
 module.exports = {
   getFirstMillionProjection,
-  getTaxas
+  getFees
 }

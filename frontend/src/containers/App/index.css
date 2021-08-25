@@ -71,7 +71,6 @@ input, input::placeholder{
     border-radius: 3px;
     height: 40px;
     color: #fff;
-    margin: auto;
     cursor: pointer
 }
 

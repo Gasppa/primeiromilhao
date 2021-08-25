@@ -1,13 +1,66 @@
-import React, { Component } from 'react'
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react'
+import { useFormik } from 'formik'
 import Radio from '@material-ui/core/Radio'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
+import { differenceInYears, parse } from 'date-fns'
+import MaskedInput from 'react-text-mask'
+import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+import * as yup from 'yup'
 import Modal from '../Modal'
-import { getFirstMillionProjectionUsingAxios } from '../../../core/api'
+import { getFirstMillionProjection, getProjections } from '../../../core/api'
 
 import './index.css'
+
+const formSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required('* Obrigatório'),
+  email: yup
+    .string()
+    .email('Digite um e-mail válido.')
+    .required('* Obrigatório'),
+  dateOfBirth: yup
+    .string()
+    .required(),
+  initialValue: yup
+    .string()
+    .required('* Obrigatório'),
+  yearsToAccomplish: yup
+    .number()
+    .min(1, 'O valor deve ser maior que 0.')
+    .required('* Obrigatório')
+})
+
+const defaultMaskOptions = {
+  prefix: 'R$ ',
+  suffix: '',
+  includeThousandsSeparator: true,
+  thousandsSeparatorSymbol: ',',
+  allowDecimal: true,
+  decimalSymbol: '.',
+  decimalLimit: 2, // how many digits allowed after the decimal
+  integerLimit: 6, // limit length of integer numbers
+  allowNegative: false,
+  allowLeadingZeroes: true
+}
+
+const currencyMask = createNumberMask(defaultMaskOptions)
+
+const TextMaskCustom = (props) => {
+  const { inputRef, ...other } = props
+
+  return (
+    <MaskedInput
+      {...other}
+      ref={inputRef}
+      mask={currencyMask}
+    />
+  )
+}
 
 const GreenRadio = withStyles({
   root: {
@@ -36,180 +89,181 @@ const CustomTextField = withStyles({
 })(TextField)
 
 const initialState = {
+  age: 0,
+  IsModalOpen: false,
+  parmaisPMT: 0,
+  regularPMT: 0
+}
+
+const initialFormValues = {
   name: '',
   email: '',
   gender: 'feminino',
   dateOfBirth: new Date().toISOString().split('T')[0],
   initialValue: '',
-  yearsToAccomplish: '',
-  IsFormValid: true,
-  IsModalOpen: true,
-  pmtComParMais: 0,
-  pmtSemParMais: 0
+  yearsToAccomplish: ''
 }
 
-export default class Form extends Component {
-  constructor (props) {
-    super()
-    this.state = initialState
-    this.handleChange = this.handleChange.bind(this)
-    this.handleDateChange = this.handleDateChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.closeModal = this.closeModal.bind(this)
+const initialProjections = {
+  IPCA: 0,
+  ratesByRisk: {
+    moderatelyAggressive: 0
   }
+}
 
-  closeModal () {
-    this.setState(initialState)
-  }
+function Form () {
+  const [state, setState] = useState(initialState)
+  const [projections, setProjections] = useState(initialProjections)
 
-  async handleSubmit (e) {
-    e.preventDefault()
-    const IsFormValid =
-      this.state.name !== '' &&
-      this.state.email !== '' &&
-      this.state.dateOfBirth !== '' &&
-      this.state.initialValue >= 0 &&
-      this.state.yearsToAccomplish > 0
-
-    console.log(IsFormValid)
-    this.setState((state) => {
-      return { ...state, IsFormValid }
-    })
-    console.log(this.state)
-
-    if (IsFormValid) {
-      const { initialValue, yearsToAccomplish } = this.state
-      const body = { initialValue, yearsToAccomplish }
-      const result = await getFirstMillionProjectionUsingAxios(body)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      this.setState((prevState) => {
-        return {
-          ...prevState,
-          pmtComParMais: result.data.pmtComParMais,
-          pmtSemParMais: result.data.pmtSemParMais,
-          IsModalOpen: true
-        }
+  useEffect(() => {
+    getProjections()
+      .then((projections) => {
+        setProjections(projections)
       })
-    }
-  }
+  }, [])
 
-  handleChange (e) {
-    this.setState((prevState) => {
+  const closeModal = () => {
+    setState((prevState) => {
       return {
         ...prevState,
-        [e.target.name]: e.target.value
+        IsModalOpen: false
       }
     })
   }
 
-  handleDateChange (e) {
-    const today = new Date().toISOString().split('T')[0]
-    if (e.target.value <= today) {
-      this.setState((prevState) => {
-        return {
-          ...prevState,
-          [e.target.name]: e.target.value
-        }
+  const formik = useFormik({
+    initialValues: { ...initialFormValues },
+    validationSchema: formSchema,
+    onSubmit: async (values) => {
+      const IsFormValid = formik.isValid
+      setState((state) => {
+        return { ...state, IsFormValid }
       })
-    } else {
-      this.setState((prevState) => {
-        return {
-          ...prevState,
-          [e.target.name]: today
+
+      if (IsFormValid) {
+        const { initialValue, yearsToAccomplish, dateOfBirth } = values
+        const parsedDate = parse(dateOfBirth, 'yyyy-MM-dd', new Date())
+        const age = differenceInYears(new Date(), parsedDate)
+        const body = {
+          initialValue: parseFloat(initialValue.replace(/[^0-9.-]+/g, '')),
+          yearsToAccomplish
         }
-      })
+        const result = await getFirstMillionProjection({ body })
+
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        setState((prevState) => {
+          return {
+            ...prevState,
+            age,
+            parmaisPMT: result.parmaisPMT,
+            regularPMT: result.regularPMT,
+            IsModalOpen: true
+          }
+        })
+      }
     }
-  }
+  })
 
-  render () {
-    return (
-      <>
-        <div className="form_container">
-          <form className="form-parmais" onSubmit={this.handleSubmit}>
-            <div className="form_card">
-              <div className="form_header">
-                <h1 className="ff-mulish_black">Como atingir R$ 1 milhão</h1>
-              </div>
-              <CustomTextField
-                className="input-parmais" type="text"name="name" label="Nome"
-                onChange={this.handleChange}
-                value={this.state.name}
-                error={this.state.name === '' && !this.state.IsFormValid}
-              />
-              <div className="mandatory-field_container">
-                <span
-                  className='ff-mulish_regular mandatory-field_text'
-                  hidden={this.state.name !== '' || this.state.IsFormValid}>* Obrigatório</span>
-              </div>
-              <CustomTextField
-                className="input-parmais" type="email" name="email" label="E-mail"
-                onChange={this.handleChange}
-                value={this.state.email}
-                error={this.state.email === '' && !this.state.IsFormValid}
-              />
-              <div className="mandatory-field_container">
-                <span
-                  className='ff-mulish_regular mandatory-field_text'
-                  hidden={this.state.email !== '' || this.state.IsFormValid}>* Obrigatório</span>
-              </div>
-              <div className="radio_container">
-                <span className="ff-mulish_regular medium-gray">Gênero</span>
-                <RadioGroup
-                  className="radio_group" row={true} aria-label="gender" name="gender"
-                  onChange={this.handleChange}
-                  value={this.state.gender}
-                >
-                  <FormControlLabel className="radio-button_feminino" value="feminino" control={<GreenRadio />} label="Feminino" />
-                  <FormControlLabel value="masculino" control={<GreenRadio />} label="Masculino" />
-                </RadioGroup>
-              </div>
-              <CustomTextField
-                className="input-parmais" name="dateOfBirth" label="Data de nascimento"
-                type="date"
-                value={this.state.dateOfBirth}
-                onChange={this.handleDateChange}
-                error={this.state.dateOfBirth === '' && !this.state.IsFormValid}
-              />
-              <div className="mandatory-field_container">
-                <span
-                  className='ff-mulish_regular mandatory-field_text'
-                  hidden={this.state.dateOfBirth !== '' || this.state.IsFormValid}>* Obrigatório</span>
-              </div>
-              <CustomTextField
-                className="input-parmais" type="number" name="initialValue" label="Quanto você tem para investir hoje?"
-                onChange={this.handleChange}
-                value={this.state.initialValue}
-                error={(this.state.initialValue < 0 || this.state.initialValue === '') && !this.state.IsFormValid}
-              />
-              <div className="mandatory-field_container">
-                <span
-                  className='ff-mulish_regular mandatory-field_text'
-                  hidden={(this.state.initialValue >= 0 && this.state.initialValue !== '') || this.state.IsFormValid}>* O valor não deve ser negativo</span>
-              </div>
-              <CustomTextField
-                className="input-parmais" type="number" name="yearsToAccomplish" label="Daqui quantos anos você quer atingir?"
-                onChange={this.handleChange}
-                value={this.state.yearsToAccomplish}
-                error={this.state.yearsToAccomplish <= 0 && !this.state.IsFormValid}
-              />
-              <div className="mandatory-field_container">
-                <span
-                  className='ff-mulish_regular mandatory-field_text'
-                  hidden={(this.state.yearsToAccomplish > 0 && this.state.yearsToAccomplish !== '') || this.state.IsFormValid}>* O valor deve ser maior que 0</span>
-              </div>
-              <span className="ff-mulish_regular medium-gray form_disclaimer">Nesta simulação aplicamos uma taxa de juros real de 4,0% ao ano e uma inflação de 4,8% ao ano.</span>
-
+  return (
+    <>
+      <div className="form_container">
+        <form className="form-parmais" onSubmit={formik.handleSubmit}>
+          <div className="form_card">
+            <div className="form_header">
+              <h1 className="ff-mulish_black">Como atingir R$ 1 milhão</h1>
             </div>
-            <button className="button-parmais button-parmais_md ff-mulish_bold" type="submit">Calcular</button>
-          </form>
-        </div>
-        <Modal
-          IsOpen={this.state.IsModalOpen}
-          closeModal={this.closeModal}
-          pmtComParMais={this.state.pmtComParMais}
-          pmtSemParMais={this.state.pmtSemParMais}
-        />
-      </>
-    )
-  }
+            <CustomTextField
+              className="input-parmais" type="text"name="name" label="Nome"
+              id='name'
+              onChange={formik.handleChange}
+              value={formik.values.name}
+              error={formik.touched.name && formik.errors.name}
+            />
+            <div className="mandatory-field_container">
+              <span
+                className='ff-mulish_regular mandatory-field_text'
+                hidden={!formik.errors.name}>* Obrigatório</span>
+            </div>
+            <CustomTextField
+              className="input-parmais" type="email" name="email" label="E-mail"
+              id='email'
+              onChange={formik.handleChange}
+              value={formik.values.email}
+              error={formik.touched.email && formik.errors.email}
+            />
+            <div className="mandatory-field_container">
+              <span
+                className='ff-mulish_regular mandatory-field_text'
+                hidden={!formik.errors.email}>{formik.errors.email}</span>
+            </div>
+            <div className="radio_container">
+              <span className="ff-mulish_regular medium-gray">Gênero</span>
+              <RadioGroup
+                className="radio_group" row={true} aria-label="gender" name="gender"
+                id='gender'
+                onChange={formik.handleChange}
+                value={formik.values.gender}
+              >
+                <FormControlLabel className="radio-button_feminino" value="feminino" control={<GreenRadio />} label="Feminino" />
+                <FormControlLabel value="masculino" control={<GreenRadio />} label="Masculino" />
+              </RadioGroup>
+            </div>
+            <CustomTextField
+              className="input-parmais input-parmais_datebirth" name="dateOfBirth" label="Data de nascimento"
+              type="date"
+              id='dateOfBirth'
+              onChange={formik.handleChange}
+              onKeyDown={(e) => (e.key === 'Delete' || e.key === 'Backspace') && e.preventDefault()}
+              value={formik.values.dateOfBirth}
+            />
+            <CustomTextField
+              className="input-parmais"
+              id='initialValue'
+              name='initialValue'
+              label='Quanto você tem para investir hoje?'
+              onChange={formik.handleChange}
+              value={(formik.values.initialValue)}
+              error={formik.touched.initialValue && formik.errors.initialValue}
+              InputProps={{
+                inputComponent: TextMaskCustom
+              }}
+            />
+            <div className="mandatory-field_container">
+              <span
+                className='ff-mulish_regular mandatory-field_text'
+                hidden={!formik.errors.initialValue}>{formik.errors.initialValue}</span>
+            </div>
+            <CustomTextField
+              className="input-parmais"
+              type="number"
+              name="yearsToAccomplish"
+              label="Daqui quantos anos você quer atingir?"
+              id='yearsToAccomplish'
+              onChange={formik.handleChange}
+              value={formik.values.yearsToAccomplish}
+              error={formik.touched.yearsToAccomplish && formik.errors.yearsToAccomplish}
+            />
+            <div className="mandatory-field_container">
+              <span
+                className='ff-mulish_regular mandatory-field_text'
+                hidden={!formik.errors.yearsToAccomplish}>{formik.errors.yearsToAccomplish}</span>
+            </div>
+            <span className="ff-mulish_regular medium-gray form_disclaimer">Nesta simulação aplicamos uma taxa de juros real de {(projections.ratesByRisk.moderatelyAggressive * 100).toFixed(1)}% ao ano e uma inflação de {(projections.IPCA * 100).toFixed(2)}% ao ano.</span>
+
+          </div>
+          <button className="button-parmais button-parmais_md button-parmais_calc ff-mulish_bold" type="submit">Calcular</button>
+        </form>
+      </div>
+      <Modal
+        IsOpen={state.IsModalOpen}
+        closeModal={closeModal}
+        parmaisPMT={state.parmaisPMT}
+        regularPMT={state.regularPMT}
+        age={state.age}
+        yearsToAccomplish={formik.values.yearsToAccomplish}
+      />
+    </>
+  )
 }
+
+export default Form

@@ -35,6 +35,11 @@
     display: flex;
 }
 
+.button_modal{
+    margin: auto;
+    max-width: max-content;
+}
+
 @media only screen and (max-width: 1080px) {
 
     .modal_resultado{
@@ -52,6 +57,11 @@
         transform: translate(-50%, -50%);
         transition: all 600ms ease-in-out;
     }
+
+    .modal_resultado_header, .modal_resultado_valores-container, .modal_resultado-motivo, .modal_resultado-btns{
+        width: inherit;
+    }
+
     .modal_resultado.fadeIn{
         top: 50%;
         width: 85vw;
@@ -60,5 +70,17 @@
 
     .modal_resultado-btns{
         flex-direction: column;
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    .modal_resultado.fadeIn{
+        width: 65vw;
+    }
+}
+
+@media only screen and (max-width: 320px) {
+    .modal_resultado.fadeIn{
+        width: 55vw;
     }
 }
