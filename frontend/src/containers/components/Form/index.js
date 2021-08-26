@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import Radio from '@material-ui/core/Radio'
